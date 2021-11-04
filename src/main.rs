@@ -1,4 +1,3 @@
-use wasm_bindgen::prelude::*;
 use yew::prelude::*;
 
 struct Model {
@@ -41,7 +40,6 @@ impl Component for Model {
     }
 }
 
-#[wasm_bindgen(start)]
-pub fn run_app() {
+pub fn main() {
     App::<Model>::new().mount_to_body();
 }
