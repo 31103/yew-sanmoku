@@ -1,10 +1,6 @@
-use board::Board;
 use yew::prelude::*;
 
-mod board;
-mod square;
-
-pub struct Model {
+pub struct Square {
     link: ComponentLink<Self>,
     value: i64,
 }
@@ -13,11 +9,11 @@ pub enum Msg {
     AddOne,
 }
 
-impl Component for Model {
+impl Component for Square {
     type Message = Msg;
     type Properties = ();
     fn create(_: Self::Properties, link: ComponentLink<Self>) -> Self {
-        Self { link, value: 0 }
+        Square { link, value: 0 }
     }
 
     fn update(&mut self, msg: Self::Message) -> ShouldRender {
@@ -36,21 +32,9 @@ impl Component for Model {
 
     fn view(&self) -> Html {
         html! {
-            <>
-                <div class="game">
-                    <div class="game-board">
-                        <Board />
-                    </div>
-                </div>
-                <div class="game-info">
-                    <div>/* status*/</div>
-                    <ol>/* TODO */</ol>
-                </div>
-            </>
+            <button class="square">
+                /* TODO */
+            </button>
         }
     }
-}
-
-pub fn main() {
-    App::<Model>::new().mount_to_body();
 }

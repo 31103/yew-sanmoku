@@ -1,8 +1,4 @@
-use board::Board;
 use yew::prelude::*;
-
-mod board;
-mod square;
 
 pub struct Model {
     link: ComponentLink<Self>,
@@ -36,21 +32,11 @@ impl Component for Model {
 
     fn view(&self) -> Html {
         html! {
-            <>
-                <div class="game">
+            <div class="game">
                     <div class="game-board">
                         <Board />
                     </div>
-                </div>
-                <div class="game-info">
-                    <div>/* status*/</div>
-                    <ol>/* TODO */</ol>
-                </div>
-            </>
+            </div>
         }
     }
-}
-
-pub fn main() {
-    App::<Model>::new().mount_to_body();
 }
