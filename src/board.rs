@@ -3,24 +3,23 @@ use yew::prelude::*;
 
 pub struct Board {
     link: ComponentLink<Self>,
-    value: i64,
+    state: Vec<String>,
 }
 
-pub enum Msg {
-    AddOne,
-}
+pub enum Msg {}
 
 impl Component for Board {
     type Message = Msg;
     type Properties = ();
     fn create(_: Self::Properties, link: ComponentLink<Self>) -> Self {
-        Board { link, value: 0 }
+        Board {
+            link,
+            state: vec!["".into(); 9],
+        }
     }
 
     fn update(&mut self, msg: Self::Message) -> ShouldRender {
-        match msg {
-            Msg::AddOne => self.value += 1,
-        }
+        match msg {}
         true
     }
 
@@ -34,23 +33,35 @@ impl Component for Board {
     fn view(&self) -> Html {
         let status = "Next player: X";
 
+        // fn renderSquare(i: usize) -> Html {
+        //     html! {
+        //         <Square value=self.state[0].clone() />
+        //     }
+        // }
+
+        let render_square = |i: usize| {
+            html! {
+                <Square value=self.state[i].clone() />
+            }
+        };
+
         html! {
             <div>
                 <div class="status">{status}</div>
                 <div class="board-row">
-                    <Square value=1 />
-                    <Square value=2 />
-                    <Square value=3 />
+                    {render_square(0)}
+                    {render_square(1)}
+                    {render_square(2)}
                 </div>
                 <div class="board-row">
-                    <Square value=4 />
-                    <Square value=5 />
-                    <Square value=6 />
+                    {render_square(3)}
+                    {render_square(4)}
+                    {render_square(5)}
                 </div>
                 <div class="board-row">
-                    <Square value=7 />
-                    <Square value=8 />
-                    <Square value=9 />
+                    {render_square(6)}
+                    {render_square(7)}
+                    {render_square(8)}
                 </div>
             </div>
         }

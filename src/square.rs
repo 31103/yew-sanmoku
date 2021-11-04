@@ -2,10 +2,9 @@ use yew::prelude::*;
 
 #[derive(Clone, Properties)]
 pub struct Props {
-    pub value: i64,
+    pub value: String,
 }
 
-#[derive(Clone)]
 pub struct Square {
     props: Props,
     link: ComponentLink<Self>,
@@ -13,7 +12,7 @@ pub struct Square {
 }
 
 pub enum Msg {
-    click,
+    Click,
 }
 
 impl Component for Square {
@@ -30,7 +29,7 @@ impl Component for Square {
 
     fn update(&mut self, msg: Self::Message) -> ShouldRender {
         match msg {
-            Msg::click => self.value = "X".into(),
+            Msg::Click => self.value = "X".into(),
         }
         true
     }
@@ -44,7 +43,7 @@ impl Component for Square {
 
     fn view(&self) -> Html {
         html! {
-            <button class="square" onclick=self.link.callback(|_|Msg::click)>
+            <button class="square" onclick=self.link.callback(|_|Msg::Click)>
                 {&self.value}
             </button>
         }
