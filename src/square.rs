@@ -1,25 +1,27 @@
 use yew::prelude::*;
 
-pub struct Square {
-    link: ComponentLink<Self>,
-    value: i64,
+#[derive(Clone, Properties)]
+pub struct Props {
+    pub value: i64,
 }
 
-pub enum Msg {
-    AddOne,
+pub struct Square {
+    props: Props,
+    link: ComponentLink<Self>,
 }
+
+pub enum Msg {}
 
 impl Component for Square {
     type Message = Msg;
-    type Properties = ();
-    fn create(_: Self::Properties, link: ComponentLink<Self>) -> Self {
-        Square { link, value: 0 }
+    type Properties = Props;
+
+    fn create(props: Self::Properties, link: ComponentLink<Self>) -> Self {
+        Self { props, link }
     }
 
     fn update(&mut self, msg: Self::Message) -> ShouldRender {
-        match msg {
-            Msg::AddOne => self.value += 1,
-        }
+        match msg {}
         true
     }
 
@@ -33,7 +35,7 @@ impl Component for Square {
     fn view(&self) -> Html {
         html! {
             <button class="square">
-                /* TODO */
+                {self.props.value}
             </button>
         }
     }
