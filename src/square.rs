@@ -5,23 +5,33 @@ pub struct Props {
     pub value: i64,
 }
 
+#[derive(Clone)]
 pub struct Square {
     props: Props,
     link: ComponentLink<Self>,
+    value: String,
 }
 
-pub enum Msg {}
+pub enum Msg {
+    click,
+}
 
 impl Component for Square {
     type Message = Msg;
     type Properties = Props;
 
     fn create(props: Self::Properties, link: ComponentLink<Self>) -> Self {
-        Self { props, link }
+        Self {
+            props,
+            link,
+            value: "".into(),
+        }
     }
 
     fn update(&mut self, msg: Self::Message) -> ShouldRender {
-        match msg {}
+        match msg {
+            Msg::click => self.value = "X".into(),
+        }
         true
     }
 
@@ -34,8 +44,8 @@ impl Component for Square {
 
     fn view(&self) -> Html {
         html! {
-            <button class="square">
-                {self.props.value}
+            <button class="square" onclick=self.link.callback(|_|Msg::click)>
+                {&self.value}
             </button>
         }
     }
