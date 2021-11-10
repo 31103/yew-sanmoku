@@ -4,7 +4,7 @@ use yew::prelude::*;
 pub struct Board {
     link: ComponentLink<Self>,
     squares: Vec<&'static str>,
-    x_is_next:bool,
+    x_is_next: bool,
 }
 
 pub enum Msg {
@@ -19,15 +19,18 @@ impl Component for Board {
         Board {
             link,
             squares: vec![""; 9],
-            x_is_next:true,
+            x_is_next: true,
         }
     }
 
     fn update(&mut self, msg: Self::Message) -> ShouldRender {
         match msg {
             Msg::Click(i) => {
-                self.squares[i]=if self.x_is_next{"X"}else{"O"};
-                self.x_is_next=!self.x_is_next;
+                if self.calculate_winner().is_some() || !self.squares[i].is_empty() {
+                    return false;
+                }
+                self.squares[i] = if self.x_is_next { "X" } else { "O" };
+                self.x_is_next = !self.x_is_next;
                 true
             }
         }
@@ -41,7 +44,12 @@ impl Component for Board {
     }
 
     fn view(&self) -> Html {
-        let status = "Next player: X";
+        // let status = format!("Next player: {}", if self.x_is_next { "X" } else { "O" });
+        let status;
+        match self.calculate_winner() {
+            Some(w) => status = format!("Winner: {}", w),
+            None => status = format!("Next player: {}", if self.x_is_next { "X" } else { "O" }),
+        }
 
         html! {
             <div>
@@ -74,5 +82,26 @@ impl Board {
                 on_click=self.link.callback(move |_| Msg::Click(i))
             />
         }
+    }
+
+    fn calculate_winner(&self) -> Option<&'static str> {
+        let squares = &self.squares;
+        let lines = [
+            [0, 1, 2],
+            [3, 4, 5],
+            [6, 7, 8],
+            [0, 3, 6],
+            [1, 4, 7],
+            [2, 5, 8],
+            [0, 4, 8],
+            [2, 4, 6],
+        ];
+        for i in 0..lines.len() {
+            let [a, b, c] = lines[i];
+            if !squares[a].is_empty() && squares[a] == squares[b] && squares[a] == squares[c] {
+                return Some(squares[a]);
+            }
+        }
+        None
     }
 }

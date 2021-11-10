@@ -1,9 +1,9 @@
 use yew::prelude::*;
 
-#[derive(Clone, Properties,PartialEq)]
+#[derive(Clone, Properties, PartialEq)]
 pub struct Props {
     pub value: &'static str,
-    pub on_click:Callback<()>,
+    pub on_click: Callback<()>,
 }
 
 pub struct Square {
@@ -20,10 +20,7 @@ impl Component for Square {
     type Properties = Props;
 
     fn create(props: Self::Properties, link: ComponentLink<Self>) -> Self {
-        Self {
-            props,
-            link,
-        }
+        Self { props, link }
     }
 
     fn update(&mut self, msg: Self::Message) -> ShouldRender {
@@ -34,10 +31,10 @@ impl Component for Square {
     }
 
     fn change(&mut self, props: Self::Properties) -> ShouldRender {
-        if props!=self.props{
-            self.props=props;
+        if props != self.props {
+            self.props = props;
             true
-        }else{
+        } else {
             false
         }
     }

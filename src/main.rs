@@ -8,14 +8,13 @@ pub struct Model {
     _link: ComponentLink<Self>,
 }
 
-pub enum Msg {
-}
+pub enum Msg {}
 
 impl Component for Model {
     type Message = Msg;
     type Properties = ();
     fn create(_: Self::Properties, _link: ComponentLink<Self>) -> Self {
-        Self { _link, }
+        Self { _link }
     }
 
     fn update(&mut self, _msg: Self::Message) -> ShouldRender {
