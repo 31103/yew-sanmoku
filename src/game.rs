@@ -2,14 +2,22 @@ use yew::prelude::*;
 
 use crate::board::Board;
 
+type Square = &'static str;
+
+#[derive(Clone)]
+struct Squares {
+    squares: Vec<Square>,
+}
+
 pub struct Game {
     link: ComponentLink<Self>,
-    history: Vec<Vec<&'static str>>,
+    history: Vec<Squares>,
     x_is_next: bool,
 }
 
 pub enum Msg {
     Click(usize),
+    JumpTo(usize),
 }
 
 impl Component for Game {
@@ -18,7 +26,9 @@ impl Component for Game {
     fn create(_: Self::Properties, link: ComponentLink<Self>) -> Self {
         Self {
             link,
-            history: vec![vec![""; 9]],
+            history: vec![Squares {
+                squares: vec![""; 9],
+            }],
             x_is_next: true,
         }
     }
@@ -26,16 +36,16 @@ impl Component for Game {
     fn update(&mut self, msg: Self::Message) -> ShouldRender {
         match msg {
             Msg::Click(i) => {
-                let history = &self.history;
-                let mut current = history.iter().last().unwrap().clone();
-                if calculate_winner(&current).is_some() || !current[i].is_empty() {
+                let mut current = self.history.iter().last().unwrap().clone();
+                if calculate_winner(&current.squares).is_some() || !current.squares[i].is_empty() {
                     return false;
                 }
-                current[i] = if self.x_is_next { "X" } else { "O" };
+                current.squares[i] = if self.x_is_next { "X" } else { "O" };
                 self.history.push(current);
                 self.x_is_next = !self.x_is_next;
                 true
             }
+            Msg::JumpTo(_) => todo!(),
         }
     }
 
@@ -50,7 +60,7 @@ impl Component for Game {
         let history = &self.history;
         let current = history.iter().last().unwrap();
         let status;
-        match calculate_winner(current) {
+        match calculate_winner(&current.squares) {
             Some(w) => status = format!("Winner: {}", w),
             None => status = format!("Next player: {}", if self.x_is_next { "X" } else { "O" }),
         }
@@ -58,14 +68,36 @@ impl Component for Game {
         html! {
             <div class="game">
                 <div class="game-board">
-                    <Board squares=current.clone() on_click=self.link.callback(move |i:usize|Msg::Click(i)) />
+                    <Board squares=current.squares.clone() on_click=self.link.callback(move |i:usize|Msg::Click(i)) />
                 </div>
                 <div class="game-info">
                     <div>{ status }</div>
-                    <ol>/* TODO */</ol>
+                    <ol>{ for self.render_history() }</ol>
                 </div>
             </div>
         }
+    }
+}
+
+impl Game {
+    fn render_history(&self) -> Vec<Html> {
+        self.history
+            .iter()
+            .enumerate()
+            .map(|(i, _)| {
+                let desc = if i != 0 {
+                    format!("Go to move #{}", i)
+                } else {
+                    "Go to game start".into()
+                };
+
+                html! {
+                    <li>
+                        <button onclick=self.link.callback(move |_|Msg::JumpTo(i))>{ desc }</button>
+                    </li>
+                }
+            })
+            .collect()
     }
 }
 
