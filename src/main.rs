@@ -5,25 +5,22 @@ mod board;
 mod square;
 
 pub struct Model {
-    link: ComponentLink<Self>,
-    value: i64,
+    _link: ComponentLink<Self>,
 }
 
 pub enum Msg {
-    AddOne,
 }
 
 impl Component for Model {
     type Message = Msg;
     type Properties = ();
-    fn create(_: Self::Properties, link: ComponentLink<Self>) -> Self {
-        Self { link, value: 0 }
+    fn create(_: Self::Properties, _link: ComponentLink<Self>) -> Self {
+        Self { _link, }
     }
 
-    fn update(&mut self, msg: Self::Message) -> ShouldRender {
-        match msg {
-            Msg::AddOne => self.value += 1,
-        }
+    fn update(&mut self, _msg: Self::Message) -> ShouldRender {
+        // match msg {
+        // }
         true
     }
 
