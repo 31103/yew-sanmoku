@@ -1,4 +1,7 @@
 /target
 /dist
+dist/
 Cargo.lock
 .DS_Store
+/.vscode
+dist/index.html

@@ -3,7 +3,8 @@ use yew::prelude::*;
 
 pub struct Board {
     link: ComponentLink<Self>,
-    state: Vec<&'static str>,
+    squares: Vec<&'static str>,
+    x_is_next:bool,
 }
 
 pub enum Msg {
@@ -17,14 +18,16 @@ impl Component for Board {
     fn create(_: Self::Properties, link: ComponentLink<Self>) -> Self {
         Board {
             link,
-            state: vec![""; 9],
+            squares: vec![""; 9],
+            x_is_next:true,
         }
     }
 
     fn update(&mut self, msg: Self::Message) -> ShouldRender {
         match msg {
             Msg::Click(i) => {
-                self.state[i]="X";
+                self.squares[i]=if self.x_is_next{"X"}else{"O"};
+                self.x_is_next=!self.x_is_next;
                 true
             }
         }
@@ -67,7 +70,7 @@ impl Board {
     fn render_square(&self, i: usize) -> Html {
         html! {
             <Square
-                value=self.state[i]
+                value=self.squares[i]
                 on_click=self.link.callback(move |_| Msg::Click(i))
             />
         }
