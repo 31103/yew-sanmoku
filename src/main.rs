@@ -52,5 +52,5 @@ impl Component for Model {
 }
 
 pub fn main() {
-    App::<Model>::new().mount_to_body();
+    yew::start_app::<Model>();
 }

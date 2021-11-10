@@ -4,4 +4,5 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+gloo-console = "0.2.0"
 yew = "0.18.0"

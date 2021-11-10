@@ -1,14 +1,14 @@
 use yew::prelude::*;
 
-#[derive(Clone, Properties)]
+#[derive(Clone, Properties,PartialEq)]
 pub struct Props {
-    pub value: String,
+    pub value: &'static str,
+    pub onClick:Callback<()>,
 }
 
 pub struct Square {
     props: Props,
     link: ComponentLink<Self>,
-    value: String,
 }
 
 pub enum Msg {
@@ -23,28 +23,32 @@ impl Component for Square {
         Self {
             props,
             link,
-            value: "".into(),
         }
     }
 
     fn update(&mut self, msg: Self::Message) -> ShouldRender {
         match msg {
-            Msg::Click => self.value = "X".into(),
+            Msg::Click => self.props.onClick.emit(()),
         }
         true
     }
 
-    fn change(&mut self, _props: Self::Properties) -> ShouldRender {
-        // Should only return "true" if new properties are different to
-        // previously received properties.
-        // This component has no properties so we will always return "false".
-        false
+    fn change(&mut self, props: Self::Properties) -> ShouldRender {
+        if props!=self.props{
+            self.props=props;
+            true
+        }else{
+            false
+        }
     }
 
     fn view(&self) -> Html {
         html! {
-            <button class="square" onclick=self.link.callback(|_|Msg::Click)>
-                {&self.value}
+            <button
+                class="square"
+                onclick=self.link.callback(|_|Msg::Click)
+            >
+                {&self.props.value}
             </button>
         }
     }
