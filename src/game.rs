@@ -2,13 +2,13 @@ use yew::prelude::*;
 
 use crate::board::Board;
 
-pub struct Model {
+pub struct Game {
     _link: ComponentLink<Self>,
 }
 
 pub enum Msg {}
 
-impl Component for Model {
+impl Component for Game {
     type Message = Msg;
     type Properties = ();
     fn create(_: Self::Properties, _link: ComponentLink<Self>) -> Self {

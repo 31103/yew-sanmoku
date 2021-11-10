@@ -3,5 +3,5 @@ mod game;
 mod square;
 
 pub fn main() {
-    yew::start_app::<game::Model>();
+    yew::start_app::<game::Game>();
 }
