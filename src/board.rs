@@ -68,7 +68,7 @@ impl Board {
         html! {
             <Square
                 value=self.state[i]
-                onClick=self.link.callback(move |_| Msg::Click(i))
+                on_click=self.link.callback(move |_| Msg::Click(i))
             />
         }
     }

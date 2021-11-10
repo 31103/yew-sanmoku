@@ -3,7 +3,7 @@ use yew::prelude::*;
 #[derive(Clone, Properties,PartialEq)]
 pub struct Props {
     pub value: &'static str,
-    pub onClick:Callback<()>,
+    pub on_click:Callback<()>,
 }
 
 pub struct Square {
@@ -28,7 +28,7 @@ impl Component for Square {
 
     fn update(&mut self, msg: Self::Message) -> ShouldRender {
         match msg {
-            Msg::Click => self.props.onClick.emit(()),
+            Msg::Click => self.props.on_click.emit(()),
         }
         true
     }
