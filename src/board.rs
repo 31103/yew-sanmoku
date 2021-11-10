@@ -1,5 +1,6 @@
-use crate::square::Square;
 use yew::prelude::*;
+
+use crate::square::Square;
 
 pub struct Board {
     link: ComponentLink<Self>,
