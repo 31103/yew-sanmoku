@@ -13,11 +13,12 @@ pub struct Game {
     link: ComponentLink<Self>,
     history: Vec<Squares>,
     x_is_next: bool,
+    step_number: usize,
 }
 
 pub enum Msg {
     Click(usize),
-    JumpTo(usize),
+    Jump(usize),
 }
 
 impl Component for Game {
@@ -30,12 +31,14 @@ impl Component for Game {
                 squares: vec![""; 9],
             }],
             x_is_next: true,
+            step_number: 0,
         }
     }
 
     fn update(&mut self, msg: Self::Message) -> ShouldRender {
         match msg {
             Msg::Click(i) => {
+                self.history.truncate(self.step_number + 1);
                 let mut current = self.history.iter().last().unwrap().clone();
                 if calculate_winner(&current.squares).is_some() || !current.squares[i].is_empty() {
                     return false;
@@ -43,9 +46,14 @@ impl Component for Game {
                 current.squares[i] = if self.x_is_next { "X" } else { "O" };
                 self.history.push(current);
                 self.x_is_next = !self.x_is_next;
+                self.step_number += 1;
                 true
             }
-            Msg::JumpTo(_) => todo!(),
+            Msg::Jump(step) => {
+                self.step_number = step;
+                self.x_is_next = (step % 2) == 0;
+                true
+            }
         }
     }
 
@@ -58,7 +66,7 @@ impl Component for Game {
 
     fn view(&self) -> Html {
         let history = &self.history;
-        let current = history.iter().last().unwrap();
+        let current = history[self.step_number].clone();
         let status;
         match calculate_winner(&current.squares) {
             Some(w) => status = format!("Winner: {}", w),
@@ -93,7 +101,7 @@ impl Game {
 
                 html! {
                     <li>
-                        <button onclick=self.link.callback(move |_|Msg::JumpTo(i))>{ desc }</button>
+                        <button onclick=self.link.callback(move |_|Msg::Jump(i))>{ desc }</button>
                     </li>
                 }
             })
