@@ -1,4 +1,5 @@
 use crate::board::Board;
+use crate::info::Info;
 use std::fmt;
 use yew::prelude::*;
 
@@ -20,21 +21,20 @@ impl fmt::Display for Square {
 }
 
 /// 盤面上の位置を示す際に使用する zero-origin
-/// col : 列
-/// row : 行
-#[derive(Clone)]
-struct Point {
-    col: usize,
-    row: usize,
+#[derive(Clone, PartialEq)]
+pub struct Point {
+    pub col: usize, // 行
+    pub row: usize, // 列
 }
 
 /// 盤面の状態の遷移を格納する`struct`
-#[derive(Clone)]
-struct History {
+#[derive(Clone, PartialEq)]
+pub struct History {
     /// 盤面の状態
-    squares: Vec<Square>,
+    pub squares: Vec<Square>,
+
     /// どこにOXを打ったか
-    point: Point,
+    pub point: Point,
 }
 
 pub struct Game {
@@ -111,64 +111,28 @@ impl Component for Game {
     fn view(&self) -> Html {
         let history = &self.history;
         let current = history[self.step_number].clone();
-        let status;
-        match calculate_winner(&current.squares) {
-            Some(w) => status = format!("Winner: {}", w),
-            None => status = format!("Next player: {}", if self.x_is_next { "X" } else { "O" }),
-        }
 
         html! {
             <div class="game">
-                <Board squares=current.squares.clone() on_click=self.link.callback(move |i:usize|Msg::Click(i)) />
-                <div class="game-info">
-                    <div>{ status }</div>
-                    <ol>{ for self.render_history() }</ol>
-                </div>
+                <Board
+                    squares=current.squares.clone()
+                    on_click=self.link.callback(move |i:usize|Msg::Click(i))
+                />
+
+                <Info
+                    history=history.clone()
+                    step_number=self.step_number
+                    x_is_next=self.x_is_next
+                    jump=self.link.callback(move |i:usize|Msg::Jump(i))
+                />
             </div>
         }
     }
 }
 
-impl Game {
-    fn render_history(&self) -> Vec<Html> {
-        self.history
-            .iter()
-            .enumerate()
-            .map(|(i, _)| {
-                let desc = if i != 0 {
-                    let plyaer = if i % 2 != 0 { "X" } else { "O" };
-                    format!(
-                        "Go to move #{} (player: {} col: {} row: {})",
-                        i,
-                        plyaer,
-                        self.history[i].point.col + 1,
-                        self.history[i].point.row + 1
-                    )
-                } else {
-                    "Go to game start".into()
-                };
-
-                // 選択されている盤面であれば、強調表示にする
-                let cls: String;
-                if self.step_number == i {
-                    cls = "selected".into()
-                } else {
-                    cls = "".into()
-                }
-
-                html! {
-                    <li>
-                        <button class=cls onclick=self.link.callback(move |_|Msg::Jump(i))>{ desc }</button>
-                    </li>
-                }
-            })
-            .collect()
-    }
-}
-
 /// 与えられた盤面の勝者を判定する関数。
 /// 勝者がいなければ、`None`を返す。
-fn calculate_winner(squares: &Vec<Square>) -> Option<Square> {
+pub fn calculate_winner(squares: &Vec<Square>) -> Option<Square> {
     let lines = [
         [0, 1, 2],
         [3, 4, 5],
