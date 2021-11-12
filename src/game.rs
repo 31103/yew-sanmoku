@@ -4,14 +4,27 @@ use crate::board::Board;
 
 type Square = &'static str;
 
+/// 盤面上の位置を示す際に使用する zero-origin
+/// col : 列
+/// row : 行
 #[derive(Clone)]
-struct Squares {
+struct Point {
+    col: usize,
+    row: usize,
+}
+
+/// 盤面の状態の遷移を格納する`struct`
+#[derive(Clone)]
+struct History {
+    /// 盤面の状態
     squares: Vec<Square>,
+    /// どこにOXを打ったか
+    point: Point,
 }
 
 pub struct Game {
     link: ComponentLink<Self>,
-    history: Vec<Squares>,
+    history: Vec<History>,
     x_is_next: bool,
     step_number: usize,
 }
@@ -27,8 +40,12 @@ impl Component for Game {
     fn create(_: Self::Properties, link: ComponentLink<Self>) -> Self {
         Self {
             link,
-            history: vec![Squares {
+            // history: vec![Squares {
+            //     squares: vec![""; 9],
+            // }],
+            history: vec![History {
                 squares: vec![""; 9],
+                point: Point { col: 0, row: 0 },
             }],
             x_is_next: true,
             step_number: 0,
@@ -38,15 +55,28 @@ impl Component for Game {
     fn update(&mut self, msg: Self::Message) -> ShouldRender {
         match msg {
             Msg::Click(i) => {
+                // プレイ時点を示す`step_number`よりも未来の盤面を削除する。
                 self.history.truncate(self.step_number + 1);
+
                 let mut current = self.history.iter().last().unwrap().clone();
+
+                // 勝敗が決しているか、既に打たれている箇所であれば、状態変更できないため
+                // 早期returnする。
                 if calculate_winner(&current.squares).is_some() || !current.squares[i].is_empty() {
                     return false;
                 }
+
+                // 盤面を更新し、打点を記録する。
                 current.squares[i] = if self.x_is_next { "X" } else { "O" };
+                current.point.col = i % 3;
+                current.point.row = i / 3;
+
+                // 現在の盤面を`history`に`push`する。
                 self.history.push(current);
+
                 self.x_is_next = !self.x_is_next;
                 self.step_number += 1;
+
                 true
             }
             Msg::Jump(step) => {
@@ -94,7 +124,14 @@ impl Game {
             .enumerate()
             .map(|(i, _)| {
                 let desc = if i != 0 {
-                    format!("Go to move #{}", i)
+                    let plyaer = if i % 2 != 0 { "X" } else { "O" };
+                    format!(
+                        "Go to move #{} (player: {} col: {} row: {})",
+                        i,
+                        plyaer,
+                        self.history[i].point.col + 1,
+                        self.history[i].point.row + 1
+                    )
                 } else {
                     "Go to game start".into()
                 };
@@ -109,6 +146,8 @@ impl Game {
     }
 }
 
+/// 与えられた盤面の勝者を判定する関数。
+/// 勝者がいなければ、`None`を返す。
 fn calculate_winner(squares: &Vec<&'static str>) -> Option<&'static str> {
     let lines = [
         [0, 1, 2],
