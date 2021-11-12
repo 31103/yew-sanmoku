@@ -66,7 +66,7 @@ impl Component for Board {
         }
 
         html! {
-            <div>
+            <div class="game-board">
                 {for rows}
             </div>
         }
