@@ -1,8 +1,23 @@
+use crate::board::Board;
+use std::fmt;
 use yew::prelude::*;
 
-use crate::board::Board;
+#[derive(Clone, PartialEq, Copy)]
+pub enum Square {
+    None,
+    X,
+    O,
+}
 
-type Square = &'static str;
+impl fmt::Display for Square {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            Square::None => write!(f, ""),
+            Square::X => write!(f, "X"),
+            Square::O => write!(f, "O"),
+        }
+    }
+}
 
 /// 盤面上の位置を示す際に使用する zero-origin
 /// col : 列
@@ -44,7 +59,7 @@ impl Component for Game {
             //     squares: vec![""; 9],
             // }],
             history: vec![History {
-                squares: vec![""; 9],
+                squares: vec![Square::None; 9],
                 point: Point { col: 0, row: 0 },
             }],
             x_is_next: true,
@@ -62,12 +77,14 @@ impl Component for Game {
 
                 // 勝敗が決しているか、既に打たれている箇所であれば、状態変更できないため
                 // 早期returnする。
-                if calculate_winner(&current.squares).is_some() || !current.squares[i].is_empty() {
+                if calculate_winner(&current.squares).is_some()
+                    || current.squares[i] != Square::None
+                {
                     return false;
                 }
 
                 // 盤面を更新し、打点を記録する。
-                current.squares[i] = if self.x_is_next { "X" } else { "O" };
+                current.squares[i] = if self.x_is_next { Square::X } else { Square::O };
                 current.point.col = i % 3;
                 current.point.row = i / 3;
 
@@ -148,7 +165,7 @@ impl Game {
 
 /// 与えられた盤面の勝者を判定する関数。
 /// 勝者がいなければ、`None`を返す。
-fn calculate_winner(squares: &Vec<&'static str>) -> Option<&'static str> {
+fn calculate_winner(squares: &Vec<Square>) -> Option<Square> {
     let lines = [
         [0, 1, 2],
         [3, 4, 5],
@@ -161,7 +178,7 @@ fn calculate_winner(squares: &Vec<&'static str>) -> Option<&'static str> {
     ];
     for i in 0..lines.len() {
         let [a, b, c] = lines[i];
-        if !squares[a].is_empty() && squares[a] == squares[b] && squares[a] == squares[c] {
+        if squares[a] != Square::None && squares[a] == squares[b] && squares[a] == squares[c] {
             return Some(squares[a]);
         }
     }

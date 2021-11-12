@@ -1,10 +1,11 @@
 use yew::prelude::*;
 
+use crate::game;
 use crate::square::Square;
 
 #[derive(Clone, PartialEq, Properties)]
 pub struct Props {
-    pub squares: Vec<&'static str>,
+    pub squares: Vec<game::Square>,
     pub on_click: Callback<usize>,
 }
 

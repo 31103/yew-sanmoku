@@ -1,8 +1,10 @@
 use yew::prelude::*;
 
+use crate::game;
+
 #[derive(Clone, Properties, PartialEq)]
 pub struct Props {
-    pub value: &'static str,
+    pub value: game::Square,
     pub on_click: Callback<()>,
 }
 
