@@ -96,6 +96,7 @@ impl Component for Game {
 
                 true
             }
+
             Msg::Jump(step) => {
                 self.step_number = step;
                 self.x_is_next = (step % 2) == 0;
@@ -152,10 +153,18 @@ impl Game {
                 } else {
                     "Go to game start".into()
                 };
+                
+                // 現在選択されている盤面であれば、アイテムをボールドする
+                let class: String;
+                if self.step_number == i {
+                    class = "selected".into()
+                } else {
+                    class = "".into()
+                }
 
                 html! {
                     <li>
-                        <button onclick=self.link.callback(move |_|Msg::Jump(i))>{ desc }</button>
+                        <button class=classes!(class) onclick=self.link.callback(move |_|Msg::Jump(i))>{ desc }</button>
                     </li>
                 }
             })
