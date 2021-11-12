@@ -45,23 +45,29 @@ impl Component for Board {
     }
 
     fn view(&self) -> Html {
+        let mut rows = vec![];
+
+        for i in 0..3 {
+            let mut squares = vec![];
+
+            // １行にマスを３個つめる
+            for j in 0..3 {
+                squares.push(html! {
+                    { self.render_square(j + i * 3) }
+                })
+            }
+
+            // ３行用意して9*9のマスを作る
+            rows.push(html! {
+                <div class="board-row">
+                    {for squares}
+                </div>
+            })
+        }
+
         html! {
             <div>
-                <div class="board-row">
-                    {self.render_square(0)}
-                    {self.render_square(1)}
-                    {self.render_square(2)}
-                </div>
-                <div class="board-row">
-                    {self.render_square(3)}
-                    {self.render_square(4)}
-                    {self.render_square(5)}
-                </div>
-                <div class="board-row">
-                    {self.render_square(6)}
-                    {self.render_square(7)}
-                    {self.render_square(8)}
-                </div>
+                {for rows}
             </div>
         }
     }
