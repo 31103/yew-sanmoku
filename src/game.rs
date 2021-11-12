@@ -119,9 +119,7 @@ impl Component for Game {
 
         html! {
             <div class="game">
-                <div class="game-board">
-                    <Board squares=current.squares.clone() on_click=self.link.callback(move |i:usize|Msg::Click(i)) />
-                </div>
+                <Board squares=current.squares.clone() on_click=self.link.callback(move |i:usize|Msg::Click(i)) />
                 <div class="game-info">
                     <div>{ status }</div>
                     <ol>{ for self.render_history() }</ol>
