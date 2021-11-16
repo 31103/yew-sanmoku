@@ -8,10 +8,11 @@
 (see previous link to install Trunk.)
 
 ```bash
-trunk build
+trunk build --release
 ```
 
-## Watch
+## Run
+
 ```bash
 trunk serve --open
 ```
